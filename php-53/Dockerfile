@@ -54,4 +54,6 @@ RUN php -i && \
     php -m && \
     pecl list -a
 
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer    
+
 CMD ["php", "-a"]
