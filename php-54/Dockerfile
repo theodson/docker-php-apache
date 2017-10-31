@@ -45,14 +45,13 @@ RUN yum install -y --enablerepo=remi \
     yes "" | pear install VersionControl_GIT-alpha && \
     yes "" | pecl install stomp-1.0.9 && \
     echo "extension=stomp.so" > /etc/php.d/stomp.ini && \
-    echo "extension=ssh2.so" > /etc/php.d/ssh2.ini && \
-    echo "date.timezone = \"Australia/NSW\"" > /etc/php.d/custom.ini && \
+    echo "extension=ssh2.so" > /etc/php.d/ssh2.ini && \    
     echo "max_execution_time = 1800" >> /etc/php.d/custom.ini && \
     echo "memory_limit = 512M" >> /etc/php.d/custom.ini && \    
     echo "upload_max_filesize = 4M" >> /etc/php.d/custom.ini         
 
 RUN v=2.5.4 && \
-    yum install -y curl-devel expat-devel gettext-devel openssl-devel zlib-devel  && \
+    yum install -y wget curl-devel expat-devel gettext-devel openssl-devel zlib-devel perl-ExtUtils-MakeMaker && \
     yum remove -y git && \
     pushd /usr/src  && \
     wget "https://www.kernel.org/pub/software/scm/git/git-$v.tar.gz"  && \
@@ -64,7 +63,7 @@ RUN v=2.5.4 && \
     echo "Installation of git-$v complete"
 
 RUN yum remove -y \
-    gcc gcc-c++ curl-devel expat-devel autoconf automake openssl-devel libssh2-devel php-devel zlib-devel && \    
+    gcc gcc-c++ wget curl-devel expat-devel autoconf automake openssl-devel libssh2-devel php-devel zlib-devel perl-ExtUtils-MakeMaker && \    
     yum clean all && \
     pecl clear-cache
 
