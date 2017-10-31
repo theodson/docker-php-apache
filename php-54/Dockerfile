@@ -51,8 +51,20 @@ RUN yum install -y --enablerepo=remi \
     echo "memory_limit = 512M" >> /etc/php.d/custom.ini && \    
     echo "upload_max_filesize = 4M" >> /etc/php.d/custom.ini         
 
+RUN v=2.5.4 && \
+    yum install -y curl-devel expat-devel gettext-devel openssl-devel zlib-devel  && \
+    yum remove -y git && \
+    pushd /usr/src  && \
+    wget "https://www.kernel.org/pub/software/scm/git/git-$v.tar.gz"  && \
+    tar -xvf "git-$v.tar.gz"  && \
+    pushd "git-$v" && \
+    make prefix=/usr/local/git all && \
+    make prefix=/usr/local/git install && \
+    echo "export PATH=\$PATH:/usr/local/git/bin" >> /etc/bashrc  && \
+    echo "Installation of git-$v complete"
+
 RUN yum remove -y \
-    gcc gcc-c++ autoconf automake openssl-devel libssh2-devel php-devel && \    
+    gcc gcc-c++ curl-devel expat-devel autoconf automake openssl-devel libssh2-devel php-devel zlib-devel && \    
     yum clean all && \
     pecl clear-cache
 
