@@ -3,35 +3,35 @@ FROM centos:6.9
 ENV PHP_VERSION 5.3.3
 
 RUN yum install -y \
-    php \
-    php-mbstring \
-    php-pgsql \
-    php-mysql \
-    php-gd \
-    php-cli \
-    php-devel \ 
-    php-pear \
-    php-pdo \
-    php-pgsql \
-    php-sqlite \
-    php-gd \
-    php-intl \
-    php-mbstring \
-    php-process \
-    php-mcrypt \
-    php-xml \
-    php-pecl-apc \
-    php-pecl-amqp \
-    php-pecl-json \
-    php-pecl-jsonc \
-    php-pecl-redis \
-    php-pecl-ssh2 && \
+        php \
+        php-mbstring \
+        php-pgsql \
+        php-mysql \
+        php-gd \
+        php-cli \
+        php-devel \ 
+        php-pear \
+        php-pdo \
+        php-pgsql \
+        php-sqlite \
+        php-gd \
+        php-intl \
+        php-mbstring \
+        php-process \
+        php-mcrypt \
+        php-xml \
+        php-pecl-apc \
+        php-pecl-amqp \
+        php-pecl-json \
+        php-pecl-jsonc \
+        php-pecl-redis \
+        php-pecl-ssh2 && \
     echo "# https://bugs.php.net/bug.php?id=63935 " && \
     ln -s /usr/lib64/libssl.so /usr/lib/libssl.so && \
     ln -s /usr/lib64/libcrypto.so /usr/lib/libcrypto.so && \
     echo "# https://unix.stackexchange.com/questions/90006/how-do-i-reduce-the-size-of-locale-archive " && \
     yum install -y \
-    gcc gcc-c++ autoconf automake openssl-devel libssh2-devel && \
+        gcc gcc-c++ autoconf automake openssl-devel libssh2-devel && \
     pecl channel-update pecl.php.net && \
     yes "" | pear install VersionControl_GIT-alpha && \
     yes "" | pecl install ssh2 && \
@@ -55,7 +55,7 @@ RUN yum install -y \
     echo "Installation of git-$v complete" && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer && \
     yum remove -y \
-    gcc gcc-c++ wget curl-devel expat-devel autoconf automake openssl-devel libssh2-devel php-devel zlib-devel perl-ExtUtils-MakeMaker && \    
+        gcc gcc-c++ wget curl-devel expat-devel autoconf automake openssl-devel libssh2-devel php-devel zlib-devel perl-ExtUtils-MakeMaker && \    
     yum clean all && \
     pecl clear-cache && \
     rm -rf /usr/src/* && \

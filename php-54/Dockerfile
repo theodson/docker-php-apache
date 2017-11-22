@@ -27,20 +27,17 @@ RUN rpm -Uvh http://download.fedoraproject.org/pub/epel/epel-release-latest-6.no
         php-pecl-json \
         php-pecl-jsonc \
         php-pecl-redis \
-        php-pecl-ssh2 \
-        git
-
-# https://bugs.php.net/bug.php?id=63935
-RUN ln -s /usr/lib64/libssl.so /usr/lib/libssl.so && \
-    ln -s /usr/lib64/libcrypto.so /usr/lib/libcrypto.so 
-
-RUN yum install -y \
+        php-pecl-ssh2 && \ 
+    echo "# https://bugs.php.net/bug.php?id=63935 " && \
+    ln -s /usr/lib64/libssl.so /usr/lib/libssl.so && \
+    ln -s /usr/lib64/libcrypto.so /usr/lib/libcrypto.so && \
+    echo "# https://unix.stackexchange.com/questions/90006/how-do-i-reduce-the-size-of-locale-archive " && \
+    yum install -y \
         php-channel-phing \
-        php-pear-phing 
-
-RUN yum install -y --enablerepo=remi \
-    php54-php-pecl-stomp \
-    gcc gcc-c++ autoconf automake openssl-devel libssh2-devel && \
+        php-pear-phing && \
+    yum install -y --enablerepo=remi \
+        php54-php-pecl-stomp \
+        gcc gcc-c++ autoconf automake openssl-devel libssh2-devel && \
     pecl channel-update pecl.php.net && \
     yes "" | pear install VersionControl_GIT-alpha && \
     yes "" | pecl install stomp-1.0.9 && \
@@ -48,9 +45,9 @@ RUN yum install -y --enablerepo=remi \
     echo "extension=ssh2.so" > /etc/php.d/ssh2.ini && \    
     echo "max_execution_time = 1800" >> /etc/php.d/custom.ini && \
     echo "memory_limit = 512M" >> /etc/php.d/custom.ini && \    
-    echo "upload_max_filesize = 4M" >> /etc/php.d/custom.ini         
-
-RUN v=2.5.4 && \
+    echo "upload_max_filesize = 4M" >> /etc/php.d/custom.ini && \
+    echo "Installation of git-$v started" && \
+    v=2.5.4 && \
     yum install -y wget curl-devel expat-devel gettext-devel openssl-devel zlib-devel perl-ExtUtils-MakeMaker && \
     yum remove -y git && \
     pushd /usr/src  && \
@@ -59,18 +56,16 @@ RUN v=2.5.4 && \
     pushd "git-$v" && \
     make prefix=/usr/local/git all && \
     make prefix=/usr/local/git install && \
-    echo "export PATH=\$PATH:/usr/local/git/bin" >> /etc/bashrc  && \
-    echo "Installation of git-$v complete"
-
-RUN yum remove -y \
-    gcc gcc-c++ wget curl-devel expat-devel autoconf automake openssl-devel libssh2-devel php-devel zlib-devel perl-ExtUtils-MakeMaker && \    
+    echo "export PATH=\$PATH:/usr/local/git/bin" >> /etc/bashrc && \
+    echo "Installation of git-$v complete" && \
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer && \
+    yum remove -y \
+        gcc gcc-c++ wget curl-devel expat-devel autoconf automake openssl-devel libssh2-devel php-devel zlib-devel perl-ExtUtils-MakeMaker && \    
     yum clean all && \
-    pecl clear-cache
-
-RUN php -i && \
-    php -m && \
-    pecl list -a
-
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
+    pecl clear-cache && \
+    rm -rf /usr/src/* && \
+    localedef --list-archive | grep -v -i ^en | xargs localedef --delete-from-archive && \ 
+    mv -f /usr/lib/locale/locale-archive /usr/lib/locale/locale-archive.tmpl && \
+    build-locale-archive   
 
 CMD ["php", "-a"]
